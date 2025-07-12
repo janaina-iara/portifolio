@@ -6,43 +6,29 @@ class CalendarScheduler {
         this.currentDate = new Date();
         this.selectedDate = null;
         this.selectedTime = null;
-        this.availability = [
-            {
-                "date": "2025-07-08",
-                "availableTimes": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]
-            },
-            {
-                "date": "2025-07-09",
-                "availableTimes": ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"]
-            },
-            {
-                "date": "2025-07-10",
-                "availableTimes": ["DIA_FREELANCER"]
-            },
-            {
-                "date": "2025-07-11",
-                "availableTimes": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]
-            },
-            {
-                "date": "2025-07-12",
-                "availableTimes": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]
-            },
-            {
-                "date": "2025-07-15",
-                "availableTimes": ["DIA_FREELANCER"]
-            },
-            {
-                "date": "2025-07-16",
-                "availableTimes": ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
-            }
-        ];
+        this.availability = []; // Será carregado do JSON
         
         this.init();
     }
 
     async init() {
+        await this.loadAvailability();
         this.render();
         this.bindEvents();
+    }
+
+    async loadAvailability() {
+        try {
+            const response = await fetch("availability.json");
+            if (!response.ok) {
+                throw new Error(`Erro ao carregar availability.json: ${response.status}`);
+            }
+            this.availability = await response.json();
+            console.log("Disponibilidade carregada:", this.availability);
+        } catch (error) {
+            console.error("Erro ao carregar disponibilidade:", error);
+            // Fallback ou tratamento de erro, se necessário
+        }
     }
 
     isDateAvailable(dateString) {
@@ -55,7 +41,7 @@ class CalendarScheduler {
     }
 
     render() {
-        const schedulingSection = document.getElementById('agendamento');
+        const schedulingSection = document.getElementById("agendamento");
         if (!schedulingSection) return;
         schedulingSection.innerHTML = `
             <div class="container">
@@ -238,17 +224,9 @@ class CalendarScheduler {
             return;
         }
         
-        const formattedDate = new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-        
         // Verificar se é um dia de freelancer
         if (availableTimes.includes('DIA_FREELANCER')) {
             timeSelection.innerHTML = `           
-	       <!-- <p class="select-date-message">Dia completo disponível para freelancer</p> -->
                 <div class="time-slots">
                     <button class="time-slot freelancer-day" data-time="DIA_FREELANCER">
                         <i class="fas fa-calendar-day"></i>
@@ -258,66 +236,71 @@ class CalendarScheduler {
             `;
         } else {
             timeSelection.innerHTML = `
-                <div class="time-slots">
-                    ${availableTimes.map(time => `
-                        <button class="time-slot" data-time="${time}">${time}</button>
-                    `).join('')}
+                <div class="time-slots time-slots-grid">
+                    ${availableTimes.map(time => {
+                        // Verifica se o horário é um intervalo (ex: 
+
+
+                        const isInterval = time.includes("-");
+                        const buttonClass = isInterval ? "time-slot-interval" : "time-slot";
+                        return `<button class="${buttonClass}" data-time="${time}">${time}</button>`;
+                    }).join("")}
                 </div>
             `;
         }
         
         // Adicionar eventos aos botões de horário
-        document.querySelectorAll('.time-slot').forEach(button => {
-            button.addEventListener('click', () => this.selectTime(button.dataset.time, button));
+        document.querySelectorAll(".time-slot, .time-slot-interval").forEach(button => {
+            button.addEventListener("click", () => this.selectTime(button.dataset.time, button));
         });
     }
 
     selectTime(time, buttonElement) {
         // Remover seleção anterior
-        document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll(".time-slot.selected, .time-slot-interval.selected").forEach(el => el.classList.remove("selected"));
         
         // Selecionar novo horário
-        buttonElement.classList.add('selected');
+        buttonElement.classList.add("selected");
         this.selectedTime = time;
         
         // Atualizar display do horário selecionado
-        const selectedTimeDisplay = document.getElementById('selectedTimeDisplay');
+        const selectedTimeDisplay = document.getElementById("selectedTimeDisplay");
         if (selectedTimeDisplay) {
-            if (time === 'DIA_FREELANCER') {
-                selectedTimeDisplay.textContent = 'Dia Completo de Freelancer';
+            if (time === "DIA_FREELANCER") {
+                selectedTimeDisplay.textContent = "Dia Completo de Freelancer";
             } else {
                 selectedTimeDisplay.textContent = time;
             }
         }
         
         // Mostrar formulário
-        document.getElementById('bookingForm').style.display = 'block';
+        document.getElementById("bookingForm").style.display = "block";
         
         // Se for dia de freelancer, pré-selecionar a opção
-        if (time === 'DIA_FREELANCER') {
-            document.getElementById('serviceType').value = 'dia-freelancer';
-            document.getElementById('petName').placeholder = "Nome da empresa/cliente (opcional)";
-            document.getElementById('petName').required = false;
+        if (time === "DIA_FREELANCER") {
+            document.getElementById("serviceType").value = "dia-freelancer";
+            document.getElementById("petName").placeholder = "Nome da empresa/cliente (opcional)";
+            document.getElementById("petName").required = false;
         } else {
             // Resetar para serviços por hora
-            document.getElementById('serviceType').value = '';
-            document.getElementById('petName').placeholder = "Nome do pet";
-            document.getElementById('petName').required = true;
+            document.getElementById("serviceType").value = "";
+            document.getElementById("petName").placeholder = "Nome do pet";
+            document.getElementById("petName").required = true;
         }
         
         // Ajustar o campo de nome do pet baseado no tipo de serviço
         this.updateFormForServiceType();
         
-        document.getElementById('bookingForm').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById("bookingForm").scrollIntoView({ behavior: "smooth" });
     }
 
     updateFormForServiceType() {
-        const serviceSelect = document.getElementById('serviceType');
-        const petNameField = document.getElementById('petName');
+        const serviceSelect = document.getElementById("serviceType");
+        const petNameField = document.getElementById("petName");
         
         // Adicionar evento para detectar mudança no tipo de serviço
-        serviceSelect.addEventListener('change', () => {
-            if (serviceSelect.value === 'dia-freelancer') {
+        serviceSelect.addEventListener("change", () => {
+            if (serviceSelect.value === "dia-freelancer") {
                 petNameField.placeholder = "Nome da empresa/cliente (opcional)";
                 petNameField.required = false;
             } else {
@@ -329,30 +312,30 @@ class CalendarScheduler {
 
     bindEvents() {
         // Navegação do calendário
-        document.getElementById('prevMonth').addEventListener('click', () => {
+        document.getElementById("prevMonth").addEventListener("click", () => {
             this.currentDate.setMonth(this.currentDate.getMonth() - 1);
             this.renderCalendar();
         });
         
-        document.getElementById('nextMonth').addEventListener('click', () => {
+        document.getElementById("nextMonth").addEventListener("click", () => {
             this.currentDate.setMonth(this.currentDate.getMonth() + 1);
             this.renderCalendar();
         });
         
         // Formulário de agendamento
-        document.getElementById('scheduleForm').addEventListener('submit', (e) => {
+        document.getElementById("scheduleForm").addEventListener("submit", (e) => {
             e.preventDefault();
             this.submitBooking();
         });
         
         // Botão cancelar
-        const cancelButton = document.getElementById('cancelSchedule');
+        const cancelButton = document.getElementById("cancelSchedule");
         if (cancelButton) {
-            cancelButton.addEventListener('click', () => {
-                document.getElementById('bookingForm').style.display = 'none';
-                document.getElementById('scheduleForm').reset();
+            cancelButton.addEventListener("click", () => {
+                document.getElementById("bookingForm").style.display = "none";
+                document.getElementById("scheduleForm").reset();
                 // Remover seleção de horário
-                document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+                document.querySelectorAll(".time-slot.selected, .time-slot-interval.selected").forEach(el => el.classList.remove("selected"));
                 this.selectedTime = null;
             });
         }
@@ -360,82 +343,83 @@ class CalendarScheduler {
 
     submitBooking() {
         const formData = {
-            name: document.getElementById('clientName').value,
-            phone: document.getElementById('clientPhone').value,
-            petName: document.getElementById('petName').value,
-            service: document.getElementById('serviceType').value,
-            observations: document.getElementById('observations').value,
+            name: document.getElementById("clientName").value,
+            phone: document.getElementById("clientPhone").value,
+            petName: document.getElementById("petName").value,
+            service: document.getElementById("serviceType").value,
+            observations: document.getElementById("observations").value,
             date: this.selectedDate,
             time: this.selectedTime
         };
         
         // Formatar data para exibição
-        const formattedDate = new Date(this.selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+        const formattedDate = new Date(this.selectedDate + "T00:00:00").toLocaleDateString("pt-BR", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
         });
         
         // Criar mensagem para WhatsApp baseada no tipo de serviço
         let message;
         
-        if (formData.service === 'dia-freelancer') {
-            message = `🐾 *CONTRATAÇÃO - DIA DE FREELANCER* 🐾
-
-Olá Janaina! Gostaria de contratar seus serviços para um dia completo de freelancer.
-
-*Data:* ${formattedDate}
-*Serviço:* ${this.getServiceName(formData.service)}
-*Nome:* ${formData.name}
-*Telefone:* ${formData.phone}
-${formData.petName ? `*Empresa/Cliente:* ${formData.petName}` : ''}
-${formData.observations ? `*Observações:* ${formData.observations}` : ''}
-
-Aguardo sua confirmação para o dia completo de trabalho de freelancer!`;
+        if (formData.service === "dia-freelancer") {
+            message = `🐾 *CONTRATAÇÃO - DIA DE FREELANCER* 🐾\n\n`;
+            message += `Olá Janaina! Gostaria de contratar seus serviços para um dia completo de freelancer.\n\n`;
+            message += `*Data:* ${formattedDate}\n`;
+            message += `*Serviço:* ${this.getServiceName(formData.service)}\n`;
+            message += `*Nome:* ${formData.name}\n`;
+            message += `*Telefone:* ${formData.phone}\n`;
+            if (formData.petName) {
+                message += `*Empresa/Cliente:* ${formData.petName}\n`;
+            }
+            if (formData.observations) {
+                message += `*Observações:* ${formData.observations}\n`;
+            }
+            message += `\nAguardo sua confirmação para o dia completo de trabalho de freelancer!`;
         } else {
-            message = `🐾 *AGENDAMENTO DE TOSA* 🐾
-
-Olá Janaina! Gostaria de agendar um horário.
-
-*Data:* ${formattedDate}
-*Horário:* ${this.selectedTime}
-*Nome:* ${formData.name}
-*Telefone:* ${formData.phone}
-*Nome do Pet:* ${formData.petName}
-*Serviço:* ${this.getServiceName(formData.service)}
-${formData.observations ? `*Observações:* ${formData.observations}` : ''}
-
-Aguardo sua confirmação!`;
+            message = `🐾 *AGENDAMENTO DE TOSA* 🐾\n\n`;
+            message += `Olá Janaina! Gostaria de agendar um horário.\n\n`;
+            message += `*Data:* ${formattedDate}\n`;
+            message += `*Horário:* ${this.selectedTime}\n`;
+            message += `*Nome:* ${formData.name}\n`;
+            message += `*Telefone:* ${formData.phone}\n`;
+            message += `*Nome do Pet:* ${formData.petName}\n`;
+            message += `*Serviço:* ${this.getServiceName(formData.service)}\n`;
+            if (formData.observations) {
+                message += `*Observações:* ${formData.observations}\n`;
+            }
+            message += `\nAguardo sua confirmação!`;
         }
         
         // Abrir WhatsApp
         const whatsappUrl = `https://wa.me/5517988146826?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
+        window.open(whatsappUrl, "_blank");
         
         // Mostrar mensagem de sucesso
-        if (formData.service === 'dia-freelancer') {
-            alert('Redirecionando para o WhatsApp para confirmar a contratação do dia completo de freelancer!');
+        if (formData.service === "dia-freelancer") {
+            alert("Redirecionando para o WhatsApp para confirmar a contratação do dia completo de freelancer!");
         } else {
-            alert('Redirecionando para o WhatsApp para confirmar o agendamento!');
+            alert("Redirecionando para o WhatsApp para confirmar o agendamento!");
         }
     }
 
     getServiceName(serviceValue) {
         const services = {
-            'dia-freelancer': 'Dia de Freelancer (Dia Completo)',
-            'banho': 'Banho',
-            'tosa-higienica': 'Tosa Higiênica',
-            'tosa-tesoura': 'Tosa na Tesoura',
-            'tosa-maquina': 'Tosa na Máquina',
-            'tosa-raca': 'Tosa da Raça'
+            "dia-freelancer": "Dia de Freelancer (Dia Completo)",
+            "banho": "Banho",
+            "tosa-higienica": "Tosa Higiênica",
+            "tosa-tesoura": "Tosa na Tesoura",
+            "tosa-maquina": "Tosa na Máquina",
+            "tosa-raca": "Tosa da Raça"
         };
         return services[serviceValue] || serviceValue;
     }
 }
 
 // Inicializar quando a página carregar
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     new CalendarScheduler();
 });
+
 
