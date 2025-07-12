@@ -238,69 +238,66 @@ class CalendarScheduler {
             timeSelection.innerHTML = `
                 <div class="time-slots time-slots-grid">
                     ${availableTimes.map(time => {
-                        // Verifica se o horário é um intervalo (ex: 
-
-
                         const isInterval = time.includes("-");
                         const buttonClass = isInterval ? "time-slot-interval" : "time-slot";
                         return `<button class="${buttonClass}" data-time="${time}">${time}</button>`;
-                    }).join("")}
+                    }).join('')}
                 </div>
             `;
         }
         
         // Adicionar eventos aos botões de horário
-        document.querySelectorAll(".time-slot, .time-slot-interval").forEach(button => {
-            button.addEventListener("click", () => this.selectTime(button.dataset.time, button));
+        document.querySelectorAll('.time-slot, .time-slot-interval').forEach(button => {
+            button.addEventListener('click', () => this.selectTime(button.dataset.time, button));
         });
     }
 
     selectTime(time, buttonElement) {
         // Remover seleção anterior
-        document.querySelectorAll(".time-slot.selected, .time-slot-interval.selected").forEach(el => el.classList.remove("selected"));
+        document.querySelectorAll('.time-slot.selected, .time-slot-interval.selected').forEach(el => el.classList.remove('selected'));
         
         // Selecionar novo horário
-        buttonElement.classList.add("selected");
+        buttonElement.classList.add('selected');
         this.selectedTime = time;
         
         // Atualizar display do horário selecionado
-        const selectedTimeDisplay = document.getElementById("selectedTimeDisplay");
+        const selectedTimeDisplay = document.getElementById('selectedTimeDisplay');
         if (selectedTimeDisplay) {
-            if (time === "DIA_FREELANCER") {
-                selectedTimeDisplay.textContent = "Dia Completo de Freelancer";
+            if (time === 'DIA_FREELANCER') {
+                selectedTimeDisplay.textContent = 'Dia Completo de Freelancer';
             } else {
                 selectedTimeDisplay.textContent = time;
             }
         }
         
         // Mostrar formulário
-        document.getElementById("bookingForm").style.display = "block";
+        document.getElementById('bookingForm').style.display = 'block';
         
         // Se for dia de freelancer, pré-selecionar a opção
-        if (time === "DIA_FREELANCER") {
-            document.getElementById("serviceType").value = "dia-freelancer";
-            document.getElementById("petName").placeholder = "Nome da empresa/cliente (opcional)";
-            document.getElementById("petName").required = false;
+        if (time === 'DIA_FREELANCER') {
+            document.getElementById('serviceType').value = 'dia-freelancer';
+            document.getElementById('petName').placeholder = "Nome da empresa/cliente (opcional)";
+            document.getElementById('petName').required = false;
         } else {
             // Resetar para serviços por hora
-            document.getElementById("serviceType").value = "";
-            document.getElementById("petName").placeholder = "Nome do pet";
-            document.getElementById("petName").required = true;
+            document.getElementById('serviceType').value = '';
+            document.getElementById('petName').placeholder = "Nome do pet";
+            document.getElementById('petName').required = true;
         }
         
         // Ajustar o campo de nome do pet baseado no tipo de serviço
         this.updateFormForServiceType();
         
-        document.getElementById("bookingForm").scrollIntoView({ behavior: "smooth" });
+        document.getElementById('bookingForm').scrollIntoView({ behavior: 'smooth' });
     }
 
     updateFormForServiceType() {
-        const serviceSelect = document.getElementById("serviceType");
-        const petNameField = document.getElementById("petName");
+        const serviceSelect = document.getElementById('serviceType');
+        const petNameField = document.getElementById('petName');
         
         // Adicionar evento para detectar mudança no tipo de serviço
-        serviceSelect.addEventListener("change", () => {
-            if (serviceSelect.value === "dia-freelancer") {
+        serviceSelect.addEventListener('change', () => {
+            if (serviceSelect.value === 'dia-freelancer') {
                 petNameField.placeholder = "Nome da empresa/cliente (opcional)";
                 petNameField.required = false;
             } else {
@@ -312,30 +309,30 @@ class CalendarScheduler {
 
     bindEvents() {
         // Navegação do calendário
-        document.getElementById("prevMonth").addEventListener("click", () => {
+        document.getElementById('prevMonth').addEventListener('click', () => {
             this.currentDate.setMonth(this.currentDate.getMonth() - 1);
             this.renderCalendar();
         });
         
-        document.getElementById("nextMonth").addEventListener("click", () => {
+        document.getElementById('nextMonth').addEventListener('click', () => {
             this.currentDate.setMonth(this.currentDate.getMonth() + 1);
             this.renderCalendar();
         });
         
         // Formulário de agendamento
-        document.getElementById("scheduleForm").addEventListener("submit", (e) => {
+        document.getElementById('scheduleForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.submitBooking();
         });
         
         // Botão cancelar
-        const cancelButton = document.getElementById("cancelSchedule");
+        const cancelButton = document.getElementById('cancelSchedule');
         if (cancelButton) {
-            cancelButton.addEventListener("click", () => {
-                document.getElementById("bookingForm").style.display = "none";
-                document.getElementById("scheduleForm").reset();
+            cancelButton.addEventListener('click', () => {
+                document.getElementById('bookingForm').style.display = 'none';
+                document.getElementById('scheduleForm').reset();
                 // Remover seleção de horário
-                document.querySelectorAll(".time-slot.selected, .time-slot-interval.selected").forEach(el => el.classList.remove("selected"));
+                document.querySelectorAll('.time-slot.selected, .time-slot-interval.selected').forEach(el => el.classList.remove('selected'));
                 this.selectedTime = null;
             });
         }
@@ -343,27 +340,27 @@ class CalendarScheduler {
 
     submitBooking() {
         const formData = {
-            name: document.getElementById("clientName").value,
-            phone: document.getElementById("clientPhone").value,
-            petName: document.getElementById("petName").value,
-            service: document.getElementById("serviceType").value,
-            observations: document.getElementById("observations").value,
+            name: document.getElementById('clientName').value,
+            phone: document.getElementById('clientPhone').value,
+            petName: document.getElementById('petName').value,
+            service: document.getElementById('serviceType').value,
+            observations: document.getElementById('observations').value,
             date: this.selectedDate,
             time: this.selectedTime
         };
         
         // Formatar data para exibição
-        const formattedDate = new Date(this.selectedDate + "T00:00:00").toLocaleDateString("pt-BR", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
+        const formattedDate = new Date(this.selectedDate + 'T00:00:00').toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
         
         // Criar mensagem para WhatsApp baseada no tipo de serviço
         let message;
         
-        if (formData.service === "dia-freelancer") {
+        if (formData.service === 'dia-freelancer') {
             message = `🐾 *CONTRATAÇÃO - DIA DE FREELANCER* 🐾\n\n`;
             message += `Olá Janaina! Gostaria de contratar seus serviços para um dia completo de freelancer.\n\n`;
             message += `*Data:* ${formattedDate}\n`;
