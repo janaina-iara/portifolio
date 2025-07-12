@@ -607,7 +607,7 @@ body {
 
 .time-slots {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Padrão para 2 colunas */
+    grid-template-columns: repeat(1, 1fr); /* Padrão para 2 colunas */
     gap: 1rem;
 }
 
