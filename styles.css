@@ -1140,6 +1140,38 @@ html {
     text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
 }
 
+.time-slot.freelancer-day {
+    background: white;
+    color: var(--neutral-medium);
+    font-weight: 600;
+    padding: 20px;
+    font-size: 16px;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid var(--contrast-subtle);
+    transition: all 0.3s ease;
+}
+
+.time-slot.freelancer-day:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    transform: scale(1.1);
+}
+
+.time-slot.freelancer-day.selected {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+}
+
+.time-slot.freelancer-day i {
+    font-size: 18px;
+
+
 /* Responsive para Dia de Freelancer */
 @media (max-width: 768px) {
     .time-slot.freelancer-day {
