@@ -1091,6 +1091,54 @@ html {
     color: var(--accent-warm);
 }
 
+.time-slot.freelancer-day {
+    background: white;
+    color: var(--neutral-medium);
+    font-weight: 600;
+    padding: 20px;
+    font-size: 16px;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid var(--contrast-subtle);
+    transition: all 0.3s ease;
+}
+
+.time-slot.freelancer-day:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    transform: scale(1.1);
+}
+
+.time-slot.freelancer-day.selected {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+}
+
+.time-slot.freelancer-day i {
+    font-size: 18px;
+}
+
+/* Estilos para o grid de horários */
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Ajusta o número de colunas */
+    gap: 1rem;
+}
+
+/* Estilos para os botões de horário */
+.time-slot,
+.time-slot-interval {
+    padding: 0.8rem 0.5rem; /* Ajusta o padding para caber o texto */
+    font-size: 0.9rem; /* Reduz o tamanho da fonte */
+    white-space: nowrap; /* Evita quebra de linha */
+    overflow: hidden; /* Esconde o que transborda */
+    text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+}
 
 .time-slot.freelancer-day {
     background: white;
