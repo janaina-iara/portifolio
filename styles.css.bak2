@@ -257,17 +257,18 @@ html {
     padding: 8px;
     box-shadow: 0 10px 30px rgba(13, 161, 147, 0.1);
     margin: 0 auto;
-    overflow: hidden;
+    overflow: hidden; /* Garante que nada saia do círculo */
 }
 
 .hero-logo-img {
-    max-width: calc(100% - 8px);
-    max-height: calc(100% - 8px);
+    max-width: calc(100% - 8px); /* Subtrai margem de segurança */
+    max-height: calc(100% - 8px); /* Subtrai margem de segurança */
     width: auto;
     height: auto;
     object-fit: contain;
     object-position: center;
 }
+
 
 /* Section Styles */
 .section-header {
@@ -668,7 +669,7 @@ html {
 
 .time-slots {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(1, 1fr); /* Padrão para 2 colunas */
     gap: 1rem;
 }
 
@@ -683,7 +684,7 @@ html {
     font-family: var(--font-family);
     font-weight: 500;
     color: var(--neutral-medium);
-    text-align: center;
+    text-align: center; /* Centraliza o texto */
 }
 
 .time-slot:hover,
@@ -779,6 +780,44 @@ html {
 .success-content p {
     color: var(--neutral-medium);
     opacity: 0.8;
+}
+
+/* Responsive Design for Scheduling */
+@media (max-width: 768px) {
+    .scheduler-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .time-slots {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .calendar-section,
+    .time-section,
+    .appointment-form {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .days-grid {
+        gap: 2px;
+    }
+
+    .day {
+        font-size: 0.9rem;
+    }
+
+    .time-slot,
+    .time-slot-interval {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
 }
 
 /* Contact Section */
@@ -960,136 +999,6 @@ html {
     opacity: 0.6;
 }
 
-/* Modal Styles for Portfolio */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-}
-
-.modal-content {
-    position: relative;
-    margin: auto;
-    padding: 0;
-    width: 90%;
-    max-width: 800px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.modal-content img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-}
-
-.close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: var(--accent-warm);
-}
-
-.time-slot.freelancer-day {
-    background: white;
-    color: var(--neutral-medium);
-    font-weight: 600;
-    padding: 20px;
-    font-size: 16px;
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 2px solid var(--contrast-subtle);
-    transition: all 0.3s ease;
-}
-
-.time-slot.freelancer-day:hover {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-    color: white;
-    transform: scale(1.1);
-}
-
-.time-slot.freelancer-day.selected {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-    color: white;
-}
-
-.time-slot.freelancer-day i {
-    font-size: 18px;
-}
-
-/* Floating Buttons - VERSÃO CORRIGIDA */
-.floating-buttons {
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    z-index: 99999 !important;
-    display: flex !important;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.floating-btn {
-    width: 60px !important;
-    height: 60px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-decoration: none !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.floating-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
-}
-
-.floating-btn:hover::before {
-    left: 100%;
-}
-
-.whatsapp-btn {
-    background: linear-gradient(45deg, #25D366, #128C7E) !important;
-    color: white !important;
-}
-
-.floating-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-}
-
-.floating-btn i {
-    font-size: 1.5rem !important;
-    color: white !important;
-    z-index: 1;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .hamburger {
@@ -1163,48 +1072,6 @@ html {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
     }
-
-    .scheduler-container {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    .time-slots {
-        grid-template-columns: 1fr;
-    }
-
-    .form-buttons {
-        flex-direction: column;
-    }
-
-    .calendar-section,
-    .time-section,
-    .appointment-form {
-        padding: 1.5rem;
-    }
-
-    .floating-buttons {
-        bottom: 15px !important;
-        right: 15px !important;
-    }
-
-    .floating-btn {
-        width: 50px !important;
-        height: 50px !important;
-    }
-
-    .floating-btn i {
-        font-size: 1.2rem !important;
-    }
-
-    .time-slot.freelancer-day {
-        padding: 15px;
-        font-size: 14px;
-    }
-    
-    .time-slot.freelancer-day i {
-        font-size: 16px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -1248,35 +1115,6 @@ html {
     .portfolio-grid {
         grid-template-columns: 1fr;
     }
-
-    .days-grid {
-        gap: 2px;
-    }
-
-    .day {
-        font-size: 0.9rem;
-    }
-
-    .time-slot,
-    .time-slot-interval {
-        padding: 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .floating-buttons {
-        bottom: 10px !important;
-        right: 10px !important;
-        gap: 10px;
-    }
-
-    .floating-btn {
-        width: 45px !important;
-        height: 45px !important;
-    }
-
-    .floating-btn i {
-        font-size: 1rem !important;
-    }
 }
 
 /* Smooth Scrolling */
@@ -1294,4 +1132,181 @@ html {
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Modal Styles for Portfolio */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--accent-warm);
+}
+
+
+.time-slot.freelancer-day {
+    background: white;
+    color: var(--neutral-medium);
+    font-weight: 600;
+    padding: 20px;
+    font-size: 16px;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid var(--contrast-subtle);
+    transition: all 0.3s ease;
+}
+
+.time-slot.freelancer-day:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    transform: scale(1.1);
+}
+
+.time-slot.freelancer-day.selected {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+}
+
+.time-slot.freelancer-day i {
+    font-size: 18px;
+
+
+/* Responsive para Dia de Freelancer */
+@media (max-width: 768px) {
+    .time-slot.freelancer-day {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .time-slot.freelancer-day i {
+        font-size: 16px;
+    }
+}
+
+/* Floating Buttons */
+.floating-buttons {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.floating-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.floating-btn:hover::before {
+    left: 100%;
+}
+
+.whatsapp-btn {
+    background: linear-gradient(45deg, #25D366, #128C7E);
+    color: white;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.floating-btn i {
+    font-size: 1.5rem;
+    z-index: 1;
+    color: white;
+}
+
+/* Responsivo para botões flutuantes */
+@media (max-width: 768px) {
+    .floating-buttons {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .floating-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .floating-btn i {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-buttons {
+        bottom: 10px;
+        right: 10px;
+        gap: 10px;
+    }
+
+    .floating-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .floating-btn i {
+        font-size: 1rem;
+    }
 }
